@@ -1,0 +1,12 @@
+---
+interface Props {
+  images: string[];
+}
+
+const { images } = Astro.props;
+---
+
+<h3>Product Slideshow</h3>
+<p>
+  { JSON.stringify(images) }
+</p>

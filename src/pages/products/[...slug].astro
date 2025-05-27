@@ -1,0 +1,65 @@
+---
+import ProductSlideshow from "@/components/products/ProductSlideshow.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+import { actions } from "astro:actions";
+
+const { slug } = Astro.params;
+
+const { data, error } = await Astro.callAction( actions.getProductBySlug, slug ?? "");
+
+if(error) {
+  return Astro.redirect("/404");
+}
+const { product, images } = data;
+---
+
+<MainLayout
+  title={product.title}
+  description={product.description}
+>
+<!-- image={image} -->
+  <h1  class="pt-12">{product.title}</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 w-full">
+    <ProductSlideshow images={images} />
+
+    <section>
+      <h2 class="text-2xl font-bold">{product.title}</h2>
+      <h2 class="font-bold">${product.price}</h2>
+
+      <h3 class="mt-5 font-bold">Tallas</h3>
+      <ul class="flex gap-3">
+        {
+          product.sizes
+            .split(',')
+            .map((size) => <li class="hover:underline cursor-pointer" data-size={size}>{size}</li>)
+        }
+      </ul>
+
+      <h3 class="mt-5 font-bold">Cantidad</h3>
+      <div>
+        <button class="w-10 text-center p-2 border border-gray-300 hover:bg-gray-100 cursor-pointer">-</button>
+        <input class="w-16 text-center p-2 border border-gray-300" type="number" min="1" value="1" />
+        <button class="w-10 text-center p-2 border border-gray-300 hover:bg-gray-100 cursor-pointer">+</button>
+      </div>
+
+      <button class="mt-5 bg-blue-500 text-white p-3 w-full"
+        >Añadir al carrito</button
+      >
+
+      <h3 class="mt-10 font-bold">Descripción</h3>
+      <p>{product.description}</p>
+    </section>
+  </div>
+
+  <input class="w-16 text-center p-2 border border-gray-300" type="hidden" id="product-id" value={product.id} />
+</MainLayout>
+
+
+<style>
+
+  /* .selected-size {
+    @apply text-blue-500 underline font-bold transition-all;
+  } */
+
+</style>
